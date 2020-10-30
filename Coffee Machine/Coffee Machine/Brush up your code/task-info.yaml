@@ -1,0 +1,322 @@
+type: edu
+custom_name: stage6
+files:
+- name: machine/coffee_machine.py
+  visible: true
+  text: "# Write your code here    \ningre = {\"water\": 400, \"milk\": 540, \"coffee_beans\"\
+    : 120, \"cups\": 9, \"money\": 550}\nbuy = \"buy\"\nfill = \"fill\"\ntake = \"\
+    take\"\nremaining = \"remaining\"\nexit_ = \"exit\"\n\ndef print_state():\n  \
+    \  print(f'''The coffee machine has:\n{ingre[\"water\"]} of water\n{ingre[\"milk\"\
+    ]} of milk\n{ingre[\"coffee_beans\"]} of coffee beans\n{ingre[\"cups\"]} of disposable\
+    \ cups\n${ingre[\"money\"]} of money\n    ''')\n\ndef to_do(action):\n    if action\
+    \ == buy:\n        action_buy()\n    elif action == fill:\n        action_fill()\n\
+    \    elif action == take:\n        action_take()\n    elif action == remaining:\n\
+    \        print_state()\n    elif action == exit_:\n        exit(0)\n    else:\n\
+    \        print(\"Invalid action.\")\n\n\ndef change_state(action, water, milk,\
+    \ coffee_beans, cups, money):\n    if action == buy:\n        ingre[\"water\"\
+    ] -= water\n        ingre[\"milk\"] -= milk\n        ingre[\"coffee_beans\"] -=\
+    \ coffee_beans\n        ingre[\"cups\"] -= 1\n        ingre[\"money\"] += money\n\
+    \    elif action == fill:\n        ingre[\"water\"] += water\n        ingre[\"\
+    milk\"] += milk\n        ingre[\"coffee_beans\"] += coffee_beans\n        ingre[\"\
+    cups\"] += cups      \n    else:\n        print(\"Invalid action\")\n    \ndef\
+    \ action_buy():\n    print(\"What do you want to buy? 1 - espresso, 2 - latte,\
+    \ 3 - cappuccino, back - to main menu:\")\n    choice = input()\n    if choice\
+    \ == \"back\":\n        return\n    else:\n        choice = int(choice)\n    if\
+    \ check_availabilty(choice):    \n        if choice == 1:\n            change_state(buy,\
+    \ 250, 0, 16, 1, 4)\n        elif choice == 2:\n            change_state(buy,\
+    \ 350, 75, 20, 1, 7)\n        elif choice == 3:\n            change_state(buy,\
+    \ 200, 100, 12, 1, 6)\n        else:\n            print(\"Invalid choice\")\n\
+    \        print(\"I have enough resources, making you a coffee!\")\n    \ndef action_fill():\n\
+    \    print(\"Write how many ml of water do you want to add:\")\n    fill_water\
+    \ = int(input())\n    print(\"Write how many ml of milk do you want to add:\"\
+    )\n    fill_milk = int(input())\n    print(\"Write how many grams of coffee beans\
+    \ do you want to add:\")\n    fill_coffee_beans = int(input())\n    print(\"Write\
+    \ how many disposable cups of coffee do you want to add:\")\n    fill_cups = int(input())\n\
+    \    change_state(fill, fill_water, fill_milk, fill_coffee_beans, fill_cups, 0)\n\
+    \ndef action_take():\n    print(f'I gave you ${ingre[\"money\"]}')\n    ingre[\"\
+    money\"] = 0\n    \ndef ingredients_required(choice):\n    if choice == 1:\n \
+    \       return [250, 0, 16, 1]\n    elif choice == 2:\n        return [350, 75,\
+    \ 20, 1]\n    elif choice == 3:\n        return [200, 100, 12, 1]\n    else:\n\
+    \        return [0, 0, 0, 0]\n    \ndef check_availabilty(choice):\n    current_ingredients\
+    \ = [ingre[\"water\"], ingre[\"milk\"], ingre[\"coffee_beans\"], ingre[\"cups\"\
+    ]]\n    ingredients_name = (\"water\", \"milk\", \"coffee_beans\", \"cups\")\n\
+    \    required_ingredients = ingredients_required(choice)\n    difference = []\n\
+    \    zip_object = zip(current_ingredients, required_ingredients)\n    for list1,\
+    \ list2 in zip_object:\n        difference.append(list1 - list2)\n    for items\
+    \ in difference:\n        if items < 0:\n            index = difference.index(items)\n\
+    \            print(f'Sorry, not enough {ingredients_name[index]}!')\n        \
+    \    return False\n        else:\n            return True\n        \n        \
+    \    \n                \nwhile True:\n    print(\"Write action (buy, fill, take,\
+    \ remaining, exit):\")\n    action = input()\n    to_do(action)\n \n\n\n\n\n"
+  learner_created: false
+- name: tests.py
+  visible: false
+  text: |
+    from hstest.stage_test import *
+    from hstest.test_case import TestCase
+
+    CheckResult.correct = lambda: CheckResult(True, '')
+    CheckResult.wrong = lambda feedback: CheckResult(False, feedback)
+
+    test1_input = '''remaining
+    buy
+    2
+    buy
+    2
+    fill
+    1000
+    0
+    0
+    0
+    buy
+    2
+    take
+    remaining
+    exit
+    '''
+
+    test2_input = '''remaining
+    fill
+    3000
+    3000
+    3000
+    3000
+    remaining
+    exit
+    '''
+
+    test3_input = '''remaining
+    buy
+    1
+    remaining
+    exit
+    '''
+
+    test4_input = '''remaining
+    buy
+    2
+    remaining
+    exit
+    '''
+
+    test5_input = '''remaining
+    buy
+    3
+    remaining
+    exit
+    '''
+
+    test6_input = '''remaining
+    take
+    remaining
+    exit
+    '''
+
+    test7_input = '''remaining
+    buy
+    back
+    remaining
+    exit
+    '''
+
+
+    class CoffeeMachineTest(StageTest):
+        def generate(self) -> List[TestCase]:
+            return TestCase.from_stepik(
+                [
+                    (
+                        test1_input,
+                        (
+                            700 - 400,
+                            390 - 540,
+                            80 - 120,
+                            7 - 9,
+                            0 - 550,
+                            "This test is exactly like in the example "
+                            "- try to run it by yourself"
+                        )
+                    ),
+
+                    (
+                        test2_input,
+                        (
+                            3000,
+                            3000,
+                            3000,
+                            3000,
+                            0,
+                            "This test checks \"fill\" action"
+                        )
+                    ),
+
+                    (
+                        test3_input,
+                        (
+                            -250,
+                            0,
+                            -16,
+                            -1,
+                            4,
+                            "This test checks \"buy\" " +
+                            "action with the first variant of coffee"
+                        )
+                    ),
+
+                    (
+                        test4_input,
+                        (
+                            -350,
+                            -75,
+                            -20,
+                            -1,
+                            7,
+                            "This test checks \"buy\" " +
+                            "action with the second variant of coffee"
+                        )
+                    ),
+
+                    (
+                        test5_input,
+                        (
+                            -200,
+                            -100,
+                            -12,
+                            -1,
+                            6,
+                            "This test checks \"buy\" " +
+                            "action with the third variant of coffee"
+                        )
+                    ),
+                    (
+                        test6_input,
+                        (
+                            0,
+                            0,
+                            0,
+                            0,
+                            -550,
+                            "This test checks \"take\" action"
+                        )
+                    ),
+
+                    (
+                        test7_input,
+                        (
+                            0,
+                            0,
+                            0,
+                            0,
+                            0,
+                            "This test checks \"back\" " +
+                            "action right after \"buy\" action"
+                        )
+                    ),
+                ]
+            )
+
+        def check(self, reply: str, clue: Any) -> CheckResult:
+            if len(reply.splitlines()) <= 1:
+                return CheckResult.wrong('Too few lines in output')
+
+            water_, milk_, beans_, cups_, money_, feedback = clue
+
+            milk = []
+            water = []
+            beans = []
+            cups = []
+            money = []
+
+            for line in reply.splitlines():
+                line = line.replace('$', '').strip()
+                if len(line.split()) == 0:
+                    continue
+                first_word = line.split()[0]
+                if not first_word.isdigit():
+                    continue
+                amount = int(first_word)
+                if 'milk' in line:
+                    milk += amount,
+                elif 'water' in line:
+                    water += amount,
+                elif 'beans' in line:
+                    beans += amount,
+                elif 'cups' in line:
+                    cups += amount,
+                elif 'money' in line or 'cash' in line:
+                    money += amount,
+
+            if len(milk) != 2:
+                return CheckResult.wrong(
+                    "There should be two lines with \"milk\", " +
+                    f"found: {len(milk)}"
+                )
+
+            if len(water) != 2:
+                return CheckResult.wrong(
+                    "There should be two lines with \"water\", " +
+                    f"found: {len(water)}"
+                )
+
+            if len(beans) != 2:
+                return CheckResult.wrong(
+                    "There should be two lines with \"beans\", " +
+                    f"found: {len(beans)}"
+                )
+
+            if len(cups) != 2:
+                return CheckResult.wrong(
+                    "There should be two lines with \"cups\", " +
+                    f"found: {len(cups)}"
+                )
+
+            if len(money) != 2:
+                return CheckResult.wrong(
+                    "There should be two lines with \"money\", " +
+                    f"found: {len(money)}"
+                )
+
+            milk = milk[0], milk[-1]
+            water = water[0], water[-1]
+            beans = beans[0], beans[-1]
+            cups = cups[0], cups[-1]
+            money = money[0], money[-1]
+
+            diff = lambda item: item[1] - item[0]
+
+            is_correct = (
+                diff(water) == water_ and
+                diff(milk) == milk_ and
+                diff(beans) == beans_ and
+                diff(cups) == cups_ and
+                diff(money) == money_
+            )
+            return CheckResult(is_correct, feedback)
+
+
+    if __name__ == '__main__':
+        CoffeeMachineTest('machine.coffee_machine').run_tests()
+  learner_created: false
+feedback_link: https://hyperskill.org/projects/68/stages/371/implement
+status: Failed
+feedback:
+  message: |-
+    Exception in test #1
+
+    Probably your program run out of input (tried to read more than expected)
+
+    Traceback (most recent call last):
+      File "coffee_machine.py", line 114, in <module>
+        action = input()
+    EOFError: EOF when reading a line
+
+    Please find below the output of your program during this failed test.
+    Note that the '>' character indicates the beginning of the input line.
+
+    ---
+
+    Write action (buy, fill, take, remaining, exit):
+    > take
+    I gave you $550
+    Write action (buy, fill, take, remaining, exit):
+  time: Fri, 30 Oct 2020 09:46:10 UTC
+record: 5
